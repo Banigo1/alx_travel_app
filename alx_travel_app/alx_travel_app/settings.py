@@ -12,9 +12,18 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import environ
+import os
 
 env = environ.Env()
 environ.Env.read_env()
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+env = environ.Env()
+environ.Env.read_env()
+
+DEBUG = env.bool('DEBUG', default=True)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)irr6@#8&o47uj0^=fz3wxtw$cb8+w32dyt8e6yff_51c**fw!'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -61,7 +70,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True,
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'alx_travel_app.urls'
 
@@ -87,13 +96,18 @@ WSGI_APPLICATION = 'alx_travel_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+'''
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'alx_travel_app',
+        'USER': 'root',
+        'PASSWORD': '12345',
+        'HOST': 'localhost',  # or the hostname where your MySQL server is running
+        'PORT': '3306',      # or the port on which your MySQL server is listening
     }
 }
-
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -134,22 +148,15 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-env = environ.Env()
-environ.Env.read_env()
-
-SECRET_KEY = env('SECRET_KEY', default='unsafe-secret-key')
-DEBUG = env.bool('DEBUG', default=True)
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST', default='localhost'),
-        'PORT': env('DB_PORT', default='3306'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST', default='localhost'),
+        'PORT': os.getenv('DB_PORT', default='3306'),
     }
 }
 
@@ -162,5 +169,3 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
 }
-
-print(env('DB_NAME', default='Not Set'))
