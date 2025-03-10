@@ -14,35 +14,26 @@ from pathlib import Path
 import environ
 import os
 
-env = environ.Env()
-environ.Env.read_env()
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-env = environ.Env()
-environ.Env.read_env()
-
-DEBUG = env.bool('DEBUG', default=True)
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# 1️⃣ Define BASE_DIR before using it
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# 2️⃣ Initialize django-environ
+env = environ.Env(DEBUG=(bool, True))  # Default DEBUG to True
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))  # Read .env file
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# 3️⃣ Default Auto Field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+# 4️⃣ Secret Key
+SECRET_KEY = env("SECRET_KEY", default="your-secret-key")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# 5️⃣ Debug Mode
+DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = []
+# 6️⃣ Allowed Hosts
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
-
-# Application definition
-
+# 7️⃣ Installed Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,8 +47,7 @@ INSTALLED_APPS = [
     'listings',
 ]
 
-# alx _travel_app CORS Setup
-
+# 8️⃣ Middleware
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -70,10 +60,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# 9️⃣ CORS Setup
 CORS_ALLOW_ALL_ORIGINS = True
 
+# 🔟 URL Configuration
 ROOT_URLCONF = 'alx_travel_app.urls'
 
+# 🔹 Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -90,77 +83,39 @@ TEMPLATES = [
     },
 ]
 
+# 🔹 WSGI Application
 WSGI_APPLICATION = 'alx_travel_app.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-'''
+# 🔹 Database Configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'alx_travel_app',
-        'USER': 'root',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',  # or the hostname where your MySQL server is running
-        'PORT': '3306',      # or the port on which your MySQL server is listening
+        'NAME': env("DB_NAME", default="alx_travel_app"),
+        'USER': env("DB_USER", default="Banigo"),
+        'PASSWORD': env("DB_PASSWORD", default="12345"),
+        'HOST': env("DB_HOST", default="localhost"),
+        'PORT': env.int("DB_PORT", default=3306),
     }
 }
-'''
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+# 🔹 Password Validation
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
+# 🔹 Internationalization
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
+# 🔹 Static Files
 STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST', default='localhost'),
-        'PORT': os.getenv('DB_PORT', default='3306'),
-    }
-}
-
-# alx _travel_app REST Framework Configuration:
+# 🔹 REST Framework Configuration
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
